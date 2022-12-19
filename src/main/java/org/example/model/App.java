@@ -19,18 +19,26 @@
 //Сделать класс который генерирует Участников - использовать faker библиотеку
 // Лиг минимум 3
 
+//Написать метод который по ИТОГУ ИГРЫ помещает их в мапу .
+//Ключ - ЛИГА, значение - Игроки этой лиги
+//Вывести это все на экран циклом for each
+
 package org.example.model;
 
 import org.example.db.DataBase;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class App {
     public static void main(String[] args) {
-
         List<Player> leaguePrime;
         List<Player> leagueSecond;
         List<Player> leagueThird;
+
+        Map<League, List<Player>> leagueListMap = new HashMap<>();
 
         DataBase db = new DataBase();
         Generator generator = new Generator();
@@ -39,23 +47,26 @@ public class App {
 // Generation of the Players
         generator.makePlayers(db);
 
-        for (int i = 0; i < 5; i++) {
+        int numOfRounds = 5;            // number 0f Rounds Of the Tournir
+// make 5 rounds of games in each league
+        for (int i = 0; i < numOfRounds; i++) {
 
 // Lists of the Leagues
-            leagueThird = db.getPlayersByLeague(League.THIRD);
-            leagueSecond = db.getPlayersByLeague(League.SECOND);
             leaguePrime = db.getPlayersByLeague(League.PRIME);
+            leagueSecond = db.getPlayersByLeague(League.SECOND);
+            leagueThird = db.getPlayersByLeague(League.THIRD);
 
 // Games for each League
-            game.makeGame(leagueThird);
-            game.makeGame(leagueSecond);
             game.makeGame(leaguePrime);
+            game.makeGame(leagueSecond);
+            game.makeGame(leagueThird);
 
-//            System.out.println("New game " + i);
+//            System.out.println("NEW GAME " + i);
 //            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-//            game.printPlayers(leagueThird);
-//            game.printPlayers(leagueSecond);
 //            game.printPlayers(leaguePrime);
+//            game.printPlayers(leagueSecond);
+//            game.printPlayers(leagueThird);
+
 
 // Transfers BestPlayers to more high leagues
             game.makeTransferBestPlayers(db.getAllPlayers(), leagueThird, League.SECOND);
@@ -65,34 +76,40 @@ public class App {
             game.makeTransferWorstPlayers(db.getAllPlayers(), leagueSecond, League.THIRD);
             game.makeTransferWorstPlayers(db.getAllPlayers(), leaguePrime, League.SECOND);
 
-//            System.out.println();
-//            System.out.println("After Transfer " + i);
-//            System.out.println("================================================================");
-//            leagueThird = db.getPlayersByLeague(League.THIRD);
-//            leagueSecond = db.getPlayersByLeague(League.SECOND);
-//            leaguePrime = db.getPlayersByLeague(League.PRIME);
-//            game.printPlayers(leagueThird);
-//            game.printPlayers(leagueSecond);
-//            game.printPlayers(leaguePrime);
-
             db.makeResetLeagueScores();     // Reset scoreInLeague to all the Leagues
 
+
+
+            if (i == (numOfRounds - 1)) {
+                leaguePrime = db.getPlayersByLeague(League.PRIME);
+                leagueSecond = db.getPlayersByLeague(League.SECOND);
+                leagueThird = db.getPlayersByLeague(League.THIRD);
+
+                System.out.println();
+                System.out.println("BEST PLAYERS");
+                System.out.println("=======================================================================");
+                game.printPlayers(game.bestPlayers(db.getAllPlayers()));
+
+                System.out.println();
+                System.out.println("HIGH TRANSFERS OF THE PLAYERS");
+                System.out.println("=======================================================================");
+                game.printPlayers(game.highTransfers(db.getAllPlayers()));
+
+                System.out.println();
+                System.out.println("LOW TRANSFERS OF THE PLAYERS");
+                System.out.println("=======================================================================");
+                game.printPlayers(game.lowTransfers(db.getAllPlayers()));
+
+                leagueListMap = game.createLeagueListMap(leaguePrime, leagueSecond, leagueThird);
+
+                for (Map.Entry<League, List<Player>> entry : leagueListMap.entrySet()) {
+                    System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                    System.out.println("League: " + entry.getKey() + " from HashMap");
+                    System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                    game.printPlayers(entry.getValue());
+                }
+            }
+
         }
-
-        System.out.println();
-        System.out.println("BEST PLAYERS");
-        System.out.println("=======================================================================");
-        game.printPlayers(game.bestPlayers(db.getAllPlayers()));
-
-        System.out.println();
-        System.out.println("HIGH TRANSFERS OF THE PLAYERS");
-        System.out.println("=======================================================================");
-        game.printPlayers(game.highTransfers(db.getAllPlayers()));
-
-        System.out.println();
-        System.out.println("LOW TRANSFERS OF THE PLAYERS");
-        System.out.println("=======================================================================");
-        game.printPlayers(game.lowTransfers(db.getAllPlayers()));
-
     }
 }

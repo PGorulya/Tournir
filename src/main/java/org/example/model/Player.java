@@ -68,5 +68,16 @@ public class Player {
         this.transfer += delta;
     }
 
-
+    @Override
+    public String toString() {
+        return "Player{" +
+                "playerId=" + playerId +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", league=" + league +
+                ", scoreInLeague=" + scoreInLeague +
+                ", totalScore=" + totalScore +
+                ", transfer=" + transfer +
+                '}';
+    }
 }

@@ -1,7 +1,7 @@
 package org.example.model;
 
 public enum League {
-    PRIME,
+    THIRD,
     SECOND,
-    THIRD;
+    PRIME;
 }

@@ -5,9 +5,10 @@ import java.util.*;
 public class Game {
 
     public void printPlayers(List<Player> players){
-
+        System.out.println("League        Name       Age       Score   TotalScore   Transfer");
+        System.out.println("-----------------------------------------------------------------");
         for(Player player: players){
-            System.out.printf("League: %s name: %s  age: %d  scoreInLeague: %d totalScore: %d transfer %d\n",
+            System.out.printf("%6s %12s  %7d  %9d %9d %9d\n",
                     player.league, player.getName(), player.getAge(),
                     player.scoreInLeague, player.totalScore, player.transfer);
         }
@@ -60,24 +61,28 @@ public class Game {
     }
 
     public void makeTransferBestPlayers(List<Player> players, List<Player> leaguePlayers, League newLeague) {
+//        System.out.println("BEST PLAYERS");
         for (int i = 0; i < 3; i++) {
-            UUID bestPlayerId = leaguePlayers.get(i).getPlayerId();
+            UUID bestPlayerId = (leaguePlayers.get(i)).getPlayerId();
             for(Player player: players) {
                 if (player.getPlayerId().equals(bestPlayerId)) {
                     player.setLeague(newLeague);
                     player.addTransfer(1);
+//                    System.out.println(player);
                 }
             }
         }
     }
 
     public void makeTransferWorstPlayers(List<Player> players, List<Player> leaguePlayers, League newLeague) {
+//        System.out.println("WORST PLAYERS");
         for (int i = 0; i < 3; i++) {
-            UUID worstPlayerId = leaguePlayers.get(leaguePlayers.size() - 1 - i).getPlayerId();
+            UUID worstPlayerId = (leaguePlayers.get(leaguePlayers.size() - 1 - i)).getPlayerId();
             for(Player player: players) {
                 if (player.getPlayerId().equals(worstPlayerId)) {
                     player.setLeague(newLeague);
                     player.addTransfer(-1);
+//                    System.out.println(player);
                 }
             }
 
@@ -115,5 +120,15 @@ public class Game {
         }
 
         return lowTransferList;
+    }
+
+    public Map<League, List<Player>> createLeagueListMap( List<Player> leaguePrime, List<Player> leagueSecond, List<Player> leagueThird ){
+        Map<League, List<Player>> leagueListMap = new HashMap<>();
+
+        leagueListMap.put(League.PRIME, leaguePrime);
+        leagueListMap.put(League.SECOND, leagueSecond);
+        leagueListMap.put(League.THIRD, leagueThird);
+
+        return leagueListMap;
     }
 }
